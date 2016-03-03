@@ -1,13 +1,10 @@
-window.onload = function() {
-    var Hello = React.createClass({
-        displayName: 'Hello',
-        render: function() {
-            return React.createElement("div", null, "Hello ", this.props.name);
-        }
-    });
+import React from "react";
+import ReactDOM from "react-dom";
 
-    ReactDOM.render(
-        React.createElement(Hello, {name: "World"}),
-        document.getElementById('container')
-    );
+class Hello extends React.component {
+    render() {
+        return <h1>Hello</h1>;
+    }
 }
+
+ReactDOM.render(<Hello />, document.getElementById("container"));
