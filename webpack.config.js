@@ -1,14 +1,14 @@
 var path = require('path');
 var webpack = require('webpack');
- 
+
 module.exports = {
-  entry: path.resolve(__dirname, "app/index.jsx"),
-  output: { 
-      path: __dirname, 
-      filename: 'dist/bundle.js' 
-  },
-  module: {
-      loaders: [
+    entry: path.resolve(__dirname, "app/index.jsx"),
+    output: {
+        path: __dirname,
+        filename: 'dist/bundle.js'
+    },
+    module: {
+        loaders: [
             {
                 test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components)/,
@@ -19,14 +19,26 @@ module.exports = {
                 loader: "style!css!sass"
             },
             {
-                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-                loader: 'url-loader?limit=10000',
-            }, 
+                test: /.(png|jp(e)?g|gif)$/,
+                loader: 'url?limit=10000',
+            }, ,
             {
-                test: /\.(eot|ttf|wav|mp3)$/,
-                loader: 'file-loader',
+                test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+                loader: "url?limit=10000&mimetype=application/font-woff"
+            },
+            {
+                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                loader: "url?limit=10000&mimetype=application/octet-stream"
+            },
+            {
+                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                loader: "file"
+            },
+            {
+                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                loader: "url?limit=10000&mimetype=image/svg+xml"
             }
-      ]
-  },
-  exclude: path.resolve(__dirname, "node_modules")
+        ]
+    },
+    exclude: path.resolve(__dirname, "node_modules")
 };
