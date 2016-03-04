@@ -1,10 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-class Hello extends React.Component {
-    render() {
-        return (<h1>Hello</h1>);
-    }
-}
+import stylesheet from "./sass/main.scss";
 
-ReactDOM.render(<Hello />, document.getElementById("container"));
+import DrawingCanvas from "./components/canvas.jsx";
+
+ReactDOM.render(<DrawingCanvas />, document.getElementById("container"));
