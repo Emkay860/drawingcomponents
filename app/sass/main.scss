@@ -1,7 +1,5 @@
 @import "vendors/materialize/materialize";
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@import "base/base";
+
+@import "components/DrawingCanvas";
