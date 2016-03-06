@@ -14,9 +14,12 @@ class DrawingCanvas extends React.Component {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
+        this.onResize = this.onResize.bind(this);
+        this.getMouseOnCanvas = this.getMouseOnCanvas.bind(this);
         
         this.state = {
             dragging: false,
+            ctx: null,
             mouse: {
                 x: 0,
                 y: 0,
@@ -37,27 +40,53 @@ class DrawingCanvas extends React.Component {
         }
     }
     
-    onMouseUp(e) {
-        this.state.dragging = false;    
+    getMouseOnCanvas(e) {
+        var x = e.clientX - this.state.canvas.offsetLeft;
+        var y = e.clientY - this.state.canvas.offsetTop;
+        return { x: x, y: y };
+    }
+    
+    onMouseUp(e) {        
+        var mousePos = this.getMouseOnCanvas(e);
+        this.state.dragging = false;
+        this.state.ctx.lineTo(mousePos.x, mousePos.y);
+        this.state.ctx.closePath();
+        this.state.ctx.stroke();
     } 
     
     onMouseDown(e) {
+        var mousePos = this.getMouseOnCanvas(e);
         this.state.dragging = true;
+        this.state.ctx.beginPath();
+        this.state.ctx.moveTo(mousePos.x, mousePos.y);
     }
     
     onMouseMove(e) {
+        var mousePos = this.getMouseOnCanvas(e);
         if (this.state.dragging) {
-            console.log(e.clientX + " " + e.clientY); 
+            console.log(mousePos.x + " " + mousePos.y); 
         }
+    }
+    
+    onResize(e) {
+        console.log(
+            this.state.canvas.width
+        );
     }
     
     componentDidMount() {
         var canvas = ReactDOM.findDOMNode(this.refs.canvas);
         var ctx = canvas.getContext("2d");
+        this.state = {
+            dragging: false,
+            ctx: ctx,
+            canvas: canvas,
+        }
         
         canvas.addEventListener("mouseup", this.onMouseUp);
         canvas.addEventListener("mousedown", this.onMouseDown);
         canvas.addEventListener("mousemove", this.onMouseMove);
+        window.addEventListener("resize", this.onResize);
     }
     
     render() {
