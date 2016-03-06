@@ -15,20 +15,18 @@ class DrawingCanvas extends React.Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onResize = this.onResize.bind(this);
-        this.getMouseOnCanvas = this.getMouseOnCanvas.bind(this);
+        this._getMouseOnCanvas = this._getMouseOnCanvas.bind(this);
+        this._getCanvasScaleFactor = this._getCanvasScaleFactor.bind(this);
         
         this.state = {
             dragging: false,
             ctx: null,
-            mouse: {
-                x: 0,
-                y: 0,
+            canvas: null,
+            scale: {
+                x: 1,
+                y: 1,
             }
         }
-    }
-    
-    printMouseCoords() {
-        console.log(this.state.mouse.x + " " + this.state.mouse.y);
     }
     
     updateMouseCoords() {
@@ -40,48 +38,60 @@ class DrawingCanvas extends React.Component {
         }
     }
     
-    getMouseOnCanvas(e) {
-        var x = e.clientX - this.state.canvas.offsetLeft;
-        var y = e.clientY - this.state.canvas.offsetTop;
+    _getMouseOnCanvas(e) {
+        var rect = this.state.canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / this.state.scale.x;
+        var y = (e.clientY - rect.top) / this.state.scale.y;
+        return { x: x, y: y };
+    }
+    
+    _getCanvasScaleFactor(canvas) {
+        var rect = canvas.getBoundingClientRect();
+        var x = rect.width / canvas.width;
+        var y = rect.height / canvas.height;
         return { x: x, y: y };
     }
     
     onMouseUp(e) {        
-        var mousePos = this.getMouseOnCanvas(e);
+        var mousePos = this._getMouseOnCanvas(e);
         this.state.dragging = false;
         this.state.ctx.lineTo(mousePos.x, mousePos.y);
-        this.state.ctx.closePath();
         this.state.ctx.stroke();
     } 
     
     onMouseDown(e) {
-        var mousePos = this.getMouseOnCanvas(e);
+        var mousePos = this._getMouseOnCanvas(e);
         this.state.dragging = true;
         this.state.ctx.beginPath();
         this.state.ctx.moveTo(mousePos.x, mousePos.y);
     }
     
     onMouseMove(e) {
-        var mousePos = this.getMouseOnCanvas(e);
+        var mousePos = this._getMouseOnCanvas(e);
         if (this.state.dragging) {
-            console.log(mousePos.x + " " + mousePos.y); 
+            this.state.ctx.stroke();
+            this.state.ctx.lineTo(mousePos.x, mousePos.y);
         }
     }
     
     onResize(e) {
-        console.log(
-            this.state.canvas.width
-        );
+        var scale = this._getCanvasScaleFactor(this.state.canvas);
+        this.state.scale.x = scale.x;
+        this.state.scale.y = scale.y;
     }
     
     componentDidMount() {
         var canvas = ReactDOM.findDOMNode(this.refs.canvas);
         var ctx = canvas.getContext("2d");
-        this.state = {
-            dragging: false,
-            ctx: ctx,
-            canvas: canvas,
-        }
+        this.state.canvas = canvas;
+        this.state.ctx = ctx;
+        
+        console.log(this.state.canvas);
+        
+        // apply any initial canvas scale factors
+        var scale = this._getCanvasScaleFactor(this.state.canvas);
+        this.state.scale.x = scale.x;
+        this.state.scale.y = scale.y;
         
         canvas.addEventListener("mouseup", this.onMouseUp);
         canvas.addEventListener("mousedown", this.onMouseDown);
@@ -93,8 +103,8 @@ class DrawingCanvas extends React.Component {
         return (
             <canvas 
                 className="DrawingCanvas_canvas card" 
-                width="550"
-                height="550"
+                width={this.props.width}
+                height={this.props.height}
                 brushColor="#000000"
                 ref="canvas">
             </canvas>
