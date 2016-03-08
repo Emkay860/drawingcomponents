@@ -7,11 +7,11 @@ window.addEventListener("load", function() {
     
     socket = io.connect(); 
     
-    console.log("emitting...");
+    //console.log("emitting...");
     socket.emit("toServer", {});
     
     socket.on("toClient", function() {
-        console.log("hello, world");
+        //console.log("hello, world");
     });
     
     // var submitButton = document.getElementsByName("input")[0];
@@ -31,4 +31,7 @@ window.addEventListener("load", function() {
     
     // receiveUserId(socket);
     // drawOnCanvas(socket);
+    
+
+export {socket};
 });

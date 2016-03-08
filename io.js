@@ -15,6 +15,13 @@ function getResponse(socket) {
 }
 
 
+function getImg(socket) {
+    socket.on("SendImage", function(data) {
+       console.log(data.img); 
+    });
+}
+
+
 // generate a unique client id and send it to the client
 // function generateClientId(socket) {
 //     socket.on("requestId", function() {     

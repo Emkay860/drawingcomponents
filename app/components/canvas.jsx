@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+import CanvasMenu from "./canvasMenu.jsx";
+
 class DrawingCanvas extends React.Component {
     
     constructor() {
@@ -13,6 +15,7 @@ class DrawingCanvas extends React.Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this._getMouseOnCanvas = this._getMouseOnCanvas.bind(this);
         this._getCanvasScaleFactor = this._getCanvasScaleFactor.bind(this);
         
@@ -39,6 +42,13 @@ class DrawingCanvas extends React.Component {
         var x = rect.width / canvas.width;
         var y = rect.height / canvas.height;
         return { x: x, y: y };
+    }
+    
+    _exportCanvas(canvas) {
+        var image = canvas.toDataURL("image/png");
+        this.props.socket.emit("SendImage", {
+            img: image
+        });
     }
     
     onMouseUp(e) {        
@@ -77,6 +87,11 @@ class DrawingCanvas extends React.Component {
         });
     }
     
+    handleClick() {
+        var canvas = this.state.canvas;
+        this._exportCanvas(canvas);
+    }
+    
     componentDidMount() {
         var canvas = ReactDOM.findDOMNode(this.refs.canvas);
         var ctx = canvas.getContext("2d");
@@ -102,13 +117,16 @@ class DrawingCanvas extends React.Component {
     
     render() {
         return (
-            <canvas 
-                className="DrawingCanvas_canvas card" 
-                width={this.props.width}
-                height={this.props.height}
-                brushColor={this.props.brushColor}
-                ref="canvas">
-            </canvas>
+            <div className="DrawingCanvas card">
+                <canvas 
+                    className="DrawingCanvas_canvas" 
+                    width={this.props.width}
+                    height={this.props.height}
+                    brushColor={this.props.brushColor}
+                    ref="canvas">
+                </canvas>
+                <CanvasMenu onClick={this.handleClick}/>
+            </div>
         );
     }
 }
@@ -116,7 +134,8 @@ class DrawingCanvas extends React.Component {
 DrawingCanvas.propTypes = {
     width: React.PropTypes.number,
     height: React.PropTypes.number,
-    brushColor: React.PropTypes.string
+    brushColor: React.PropTypes.string,
+    socket: React.PropTypes.function
 };
 
 export default DrawingCanvas;

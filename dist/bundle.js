@@ -58,7 +58,7 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	__webpack_require__(183);
+	var _socketHandler = __webpack_require__(183);
 
 	var _canvas = __webpack_require__(184);
 
@@ -66,7 +66,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, { width: 550, height: 550, brushColor: "#000000" }), document.getElementById("container"));
+	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, { socket: _socketHandler.socket, width: 550, height: 550, brushColor: "#000000" }), document.getElementById("container"));
 
 	/* eslint no-unused-vars: 0 */
 
@@ -20147,20 +20147,19 @@
 
 	"use strict";
 
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/* global io */
+
 	var socket;
-	var countField;
-	var id;
 
 	window.addEventListener("load", function () {
-	    countField = document.getElementById("count");
-	    socket = io.connect();
+	    //countField = document.getElementById("count");
 
-	    console.log("emitting...");
-	    socket.emit("toServer", {});
+	    exports.
+	    //console.log("hello, world");
 
-	    socket.on("toClient", function () {
-	        console.log("hello, world");
-	    });
 
 	    // var submitButton = document.getElementsByName("input")[0];
 	    // var xPos = document.getElementsByName("xPos")[0];
@@ -20179,7 +20178,15 @@
 
 	    // receiveUserId(socket);
 	    // drawOnCanvas(socket);
+	    socket = socket = io.connect();
+
+	    //console.log("emitting...");
+	    socket.emit("toServer", {});
+
+	    socket.on("toClient", function () {});
 	});
+
+	exports.socket = socket;
 
 /***/ },
 /* 184 */
@@ -20200,6 +20207,10 @@
 	var _reactDom = __webpack_require__(158);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _canvasMenu = __webpack_require__(185);
+
+	var _canvasMenu2 = _interopRequireDefault(_canvasMenu);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20225,6 +20236,7 @@
 	        _this.onMouseDown = _this.onMouseDown.bind(_this);
 	        _this.onMouseMove = _this.onMouseMove.bind(_this);
 	        _this.onResize = _this.onResize.bind(_this);
+	        _this.handleClick = _this.handleClick.bind(_this);
 	        _this._getMouseOnCanvas = _this._getMouseOnCanvas.bind(_this);
 	        _this._getCanvasScaleFactor = _this._getCanvasScaleFactor.bind(_this);
 
@@ -20255,6 +20267,14 @@
 	            var x = rect.width / canvas.width;
 	            var y = rect.height / canvas.height;
 	            return { x: x, y: y };
+	        }
+	    }, {
+	        key: "_exportCanvas",
+	        value: function _exportCanvas(canvas) {
+	            var image = canvas.toDataURL("image/png");
+	            this.props.socket.emit("SendImage", {
+	                img: image
+	            });
 	        }
 	    }, {
 	        key: "onMouseUp",
@@ -20297,6 +20317,12 @@
 	            });
 	        }
 	    }, {
+	        key: "handleClick",
+	        value: function handleClick() {
+	            var canvas = this.state.canvas;
+	            this._exportCanvas(canvas);
+	        }
+	    }, {
 	        key: "componentDidMount",
 	        value: function componentDidMount() {
 	            var canvas = _reactDom2.default.findDOMNode(this.refs.canvas);
@@ -20323,12 +20349,17 @@
 	    }, {
 	        key: "render",
 	        value: function render() {
-	            return _react2.default.createElement("canvas", {
-	                className: "DrawingCanvas_canvas card",
-	                width: this.props.width,
-	                height: this.props.height,
-	                brushColor: this.props.brushColor,
-	                ref: "canvas" });
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "DrawingCanvas card" },
+	                _react2.default.createElement("canvas", {
+	                    className: "DrawingCanvas_canvas",
+	                    width: this.props.width,
+	                    height: this.props.height,
+	                    brushColor: this.props.brushColor,
+	                    ref: "canvas" }),
+	                _react2.default.createElement(_canvasMenu2.default, { onClick: this.handleClick })
+	            );
 	        }
 	    }]);
 
@@ -20338,10 +20369,71 @@
 	DrawingCanvas.propTypes = {
 	    width: _react2.default.PropTypes.number,
 	    height: _react2.default.PropTypes.number,
-	    brushColor: _react2.default.PropTypes.string
+	    brushColor: _react2.default.PropTypes.string,
+	    socket: _react2.default.PropTypes.function
 	};
 
 	exports.default = DrawingCanvas;
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CanvasMenu = function (_React$Component) {
+	    _inherits(CanvasMenu, _React$Component);
+
+	    function CanvasMenu() {
+	        _classCallCheck(this, CanvasMenu);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CanvasMenu).call(this));
+	    }
+
+	    _createClass(CanvasMenu, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "card-action" },
+	                _react2.default.createElement(
+	                    "span",
+	                    {
+	                        href: "",
+	                        onClick: this.props.onClick
+	                    },
+	                    "Submit"
+	                )
+	            );
+	        }
+	    }]);
+
+	    return CanvasMenu;
+	}(_react2.default.Component);
+
+	CanvasMenu.propTypes = {
+	    onClick: _react2.default.PropTypes.function
+	};
+
+	exports.default = CanvasMenu;
 
 /***/ }
 /******/ ]);
