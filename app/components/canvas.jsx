@@ -89,6 +89,9 @@ class DrawingCanvas extends React.Component {
     
     handleClick() {
         var canvas = this.state.canvas;
+        
+        /* eslint no-console: 0 */
+        console.log("click");
         this._exportCanvas(canvas);
     }
     
@@ -135,7 +138,7 @@ DrawingCanvas.propTypes = {
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     brushColor: React.PropTypes.string,
-    socket: React.PropTypes.function
+    socket: React.PropTypes.object
 };
 
 export default DrawingCanvas;

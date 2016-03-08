@@ -2,7 +2,7 @@
 
 var socket;
 
-window.addEventListener("load", function() {
+function connectToSocket(callback) {
     //countField = document.getElementById("count");
     
     socket = io.connect(); 
@@ -31,7 +31,8 @@ window.addEventListener("load", function() {
     
     // receiveUserId(socket);
     // drawOnCanvas(socket);
-    
+    callback(socket);
+}
 
-export {socket};
-});
+
+export {connectToSocket};

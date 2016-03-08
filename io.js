@@ -68,6 +68,7 @@ function getImg(socket) {
 io.sockets.on("connection", function(socket) {
     socket.join("room1");
     getResponse(socket);
+    getImg(socket);
     // generateClientId(socket);
     // addToDrawStack(socket);    
 });

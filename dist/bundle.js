@@ -66,7 +66,11 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, { socket: _socketHandler.socket, width: 550, height: 550, brushColor: "#000000" }), document.getElementById("container"));
+	window.addEventListener("load", function () {
+	    (0, _socketHandler.connectToSocket)(function (socket) {
+	        _reactDom2.default.render(_react2.default.createElement(_canvas2.default, { socket: socket, width: 550, height: 550, brushColor: "#000000" }), document.getElementById("container"));
+	    });
+	});
 
 	/* eslint no-unused-vars: 0 */
 
@@ -20154,12 +20158,17 @@
 
 	var socket;
 
-	window.addEventListener("load", function () {
+	function connectToSocket(callback) {
 	    //countField = document.getElementById("count");
 
-	    exports.
-	    //console.log("hello, world");
+	    socket = io.connect();
 
+	    //console.log("emitting...");
+	    socket.emit("toServer", {});
+
+	    socket.on("toClient", function () {
+	        //console.log("hello, world");
+	    });
 
 	    // var submitButton = document.getElementsByName("input")[0];
 	    // var xPos = document.getElementsByName("xPos")[0];
@@ -20178,15 +20187,10 @@
 
 	    // receiveUserId(socket);
 	    // drawOnCanvas(socket);
-	    socket = socket = io.connect();
+	    callback(socket);
+	}
 
-	    //console.log("emitting...");
-	    socket.emit("toServer", {});
-
-	    socket.on("toClient", function () {});
-	});
-
-	exports.socket = socket;
+	exports.connectToSocket = connectToSocket;
 
 /***/ },
 /* 184 */
@@ -20320,6 +20324,9 @@
 	        key: "handleClick",
 	        value: function handleClick() {
 	            var canvas = this.state.canvas;
+
+	            /* eslint no-console: 0 */
+	            console.log("click");
 	            this._exportCanvas(canvas);
 	        }
 	    }, {
@@ -20370,7 +20377,7 @@
 	    width: _react2.default.PropTypes.number,
 	    height: _react2.default.PropTypes.number,
 	    brushColor: _react2.default.PropTypes.string,
-	    socket: _react2.default.PropTypes.function
+	    socket: _react2.default.PropTypes.object
 	};
 
 	exports.default = DrawingCanvas;
@@ -20430,7 +20437,7 @@
 	}(_react2.default.Component);
 
 	CanvasMenu.propTypes = {
-	    onClick: _react2.default.PropTypes.function
+	    onClick: _react2.default.PropTypes.func
 	};
 
 	exports.default = CanvasMenu;

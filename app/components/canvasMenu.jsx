@@ -19,7 +19,7 @@ class CanvasMenu extends React.Component {
 }
 
 CanvasMenu.propTypes = {
-    onClick: React.PropTypes.function
+    onClick: React.PropTypes.func
 };
 
 export default CanvasMenu;
