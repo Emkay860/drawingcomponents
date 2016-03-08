@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 /* eslint no-unused-vars: 0 */
 import stylesheet from "./sass/main.scss";
 
+import "./js/socketHandler.js";
+
 import DrawingCanvas from "./components/canvas.jsx";
 
 ReactDOM.render(

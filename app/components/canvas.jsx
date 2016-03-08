@@ -81,17 +81,13 @@ class DrawingCanvas extends React.Component {
         var canvas = ReactDOM.findDOMNode(this.refs.canvas);
         var ctx = canvas.getContext("2d");
         
+        // apply any initial canvas scale factors
+        var scale = this._getCanvasScaleFactor(canvas);
+        
         /* eslint react/no-did-mount-set-state: 0 */
         this.setState({
             canvas: canvas,
-            ctx: ctx
-        });
-        
-        // apply any initial canvas scale factors
-        var scale = this._getCanvasScaleFactor(this.state.canvas);
-        
-        /* eslint react/no-did-mount-set-state: 0 */
-        this.setState({
+            ctx: ctx,
             scale: {
                 x: scale.x,
                 y: scale.y
@@ -118,9 +114,9 @@ class DrawingCanvas extends React.Component {
 }
 
 DrawingCanvas.propTypes = {
-    width: React.propTypes.number,
-    height: React.propTypes.number,
-    brushColor: React.propTypes.string
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    brushColor: React.PropTypes.string
 };
 
 export default DrawingCanvas;

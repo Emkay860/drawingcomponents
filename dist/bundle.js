@@ -58,13 +58,17 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _canvas = __webpack_require__(183);
+	__webpack_require__(183);
+
+	var _canvas = __webpack_require__(184);
 
 	var _canvas2 = _interopRequireDefault(_canvas);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, { width: 550, height: 550 }), document.getElementById("container"));
+	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, { width: 550, height: 550, brushColor: "#000000" }), document.getElementById("container"));
+
+	/* eslint no-unused-vars: 0 */
 
 /***/ },
 /* 1 */
@@ -20139,6 +20143,46 @@
 
 /***/ },
 /* 183 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var socket;
+	var countField;
+	var id;
+
+	window.addEventListener("load", function () {
+	    countField = document.getElementById("count");
+	    socket = io.connect();
+
+	    console.log("emitting...");
+	    socket.emit("toServer", {});
+
+	    socket.on("toClient", function () {
+	        console.log("hello, world");
+	    });
+
+	    // var submitButton = document.getElementsByName("input")[0];
+	    // var xPos = document.getElementsByName("xPos")[0];
+	    // var yPos = document.getElementsByName("yPos")[0];
+	    // submitButton.addEventListener("click", function() {
+	    //     var x = xPos.value;
+	    //     var y = yPos.value;
+	    //     var imgData = {
+	    //         x: x,
+	    //         y: y,
+	    //         client: id,
+	    //         timestamp: moment().format()
+	    //     }
+	    //     socket.emit("addToStack", imgData);
+	    // });
+
+	    // receiveUserId(socket);
+	    // drawOnCanvas(socket);
+	});
+
+/***/ },
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20168,14 +20212,14 @@
 	var DrawingCanvas = function (_React$Component) {
 	    _inherits(DrawingCanvas, _React$Component);
 
-	    function DrawingCanvas(props) {
+	    function DrawingCanvas() {
 	        _classCallCheck(this, DrawingCanvas);
 
 	        // this makes sure that when canvas calls these function,
 	        // "this" will refer to the DrawingCanvas and not the actual
 	        // HTML canvas element.
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DrawingCanvas).call(this, props));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DrawingCanvas).call(this));
 
 	        _this.onMouseUp = _this.onMouseUp.bind(_this);
 	        _this.onMouseDown = _this.onMouseDown.bind(_this);
@@ -20197,16 +20241,6 @@
 	    }
 
 	    _createClass(DrawingCanvas, [{
-	        key: "updateMouseCoords",
-	        value: function updateMouseCoords() {
-	            this.state = {
-	                mouse: {
-	                    x: mouse[0],
-	                    y: mouse[1]
-	                }
-	            };
-	        }
-	    }, {
 	        key: "_getMouseOnCanvas",
 	        value: function _getMouseOnCanvas(e) {
 	            var rect = this.state.canvas.getBoundingClientRect();
@@ -20226,7 +20260,9 @@
 	        key: "onMouseUp",
 	        value: function onMouseUp(e) {
 	            var mousePos = this._getMouseOnCanvas(e);
-	            this.state.dragging = false;
+	            this.setState({
+	                dragging: false
+	            });
 	            this.state.ctx.lineTo(mousePos.x, mousePos.y);
 	            this.state.ctx.stroke();
 	        }
@@ -20234,7 +20270,9 @@
 	        key: "onMouseDown",
 	        value: function onMouseDown(e) {
 	            var mousePos = this._getMouseOnCanvas(e);
-	            this.state.dragging = true;
+	            this.setState({
+	                dragging: true
+	            });
 	            this.state.ctx.beginPath();
 	            this.state.ctx.moveTo(mousePos.x, mousePos.y);
 	        }
@@ -20249,25 +20287,33 @@
 	        }
 	    }, {
 	        key: "onResize",
-	        value: function onResize(e) {
+	        value: function onResize() {
 	            var scale = this._getCanvasScaleFactor(this.state.canvas);
-	            this.state.scale.x = scale.x;
-	            this.state.scale.y = scale.y;
+	            this.setState({
+	                scale: {
+	                    x: scale.x,
+	                    y: scale.y
+	                }
+	            });
 	        }
 	    }, {
 	        key: "componentDidMount",
 	        value: function componentDidMount() {
 	            var canvas = _reactDom2.default.findDOMNode(this.refs.canvas);
 	            var ctx = canvas.getContext("2d");
-	            this.state.canvas = canvas;
-	            this.state.ctx = ctx;
-
-	            console.log(this.state.canvas);
 
 	            // apply any initial canvas scale factors
-	            var scale = this._getCanvasScaleFactor(this.state.canvas);
-	            this.state.scale.x = scale.x;
-	            this.state.scale.y = scale.y;
+	            var scale = this._getCanvasScaleFactor(canvas);
+
+	            /* eslint react/no-did-mount-set-state: 0 */
+	            this.setState({
+	                canvas: canvas,
+	                ctx: ctx,
+	                scale: {
+	                    x: scale.x,
+	                    y: scale.y
+	                }
+	            });
 
 	            canvas.addEventListener("mouseup", this.onMouseUp);
 	            canvas.addEventListener("mousedown", this.onMouseDown);
@@ -20281,13 +20327,19 @@
 	                className: "DrawingCanvas_canvas card",
 	                width: this.props.width,
 	                height: this.props.height,
-	                brushColor: "#000000",
+	                brushColor: this.props.brushColor,
 	                ref: "canvas" });
 	        }
 	    }]);
 
 	    return DrawingCanvas;
 	}(_react2.default.Component);
+
+	DrawingCanvas.propTypes = {
+	    width: _react2.default.PropTypes.number,
+	    height: _react2.default.PropTypes.number,
+	    brushColor: _react2.default.PropTypes.string
+	};
 
 	exports.default = DrawingCanvas;
 
